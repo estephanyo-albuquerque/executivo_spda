@@ -77,6 +77,9 @@ def carregar_dados(uploaded_file):
     except Exception as e: st.error(f"Erro: {e}"); return None
 
 def processar_dataframe(df):
+    df['Resistance_Num'] = pd.to_numeric(df['Resistance'], errors='coerce')
+    df['Resistance_Num'] = df['Resistance_Num'].fillna(999.0)
+    
     if 'Date' in df.columns and not df['Date'].dropna().empty:
         # Garante que a coluna seja datetime
         df['Date'] = pd.to_datetime(df['Date'])
@@ -448,3 +451,4 @@ if f:
                 st.subheader(f"Modelo: {modelo}"); df_mod = df_piv_show[df_piv_show['Blade Model'] == modelo]
                 cols_r = [c for c in df_mod.columns if 'Receptor' in c]; cols_v = df_mod[cols_r].dropna(axis=1, how='all').columns.tolist()
                 st.dataframe(df_mod[['Turbine','Blade Index', 'Status_Turbina', 'Status_Final'] + cols_v].style.map(highlight), use_container_width=True)
+
